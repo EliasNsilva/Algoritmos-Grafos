@@ -1,6 +1,6 @@
 # Algoritmos de Grafos
 
-## Formado do comando para execução 
+## Formato do comando para execução 
 
 Dentro da pasta do algoritmo desejado:
 ```

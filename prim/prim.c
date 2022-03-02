@@ -1,21 +1,23 @@
 #include "functions.h"
 
-
-int main(int argc, char *argv[ ]){
-
+int main(int argc, char *argv[ ])
+{
     char string[100], string2[5], nome_saida[100];
-    int n_ver, n_ares, x , y, a, v0, vf;
-    int imp = 0;
+    int n_ver, n_ares, x , y, a; 
+    int v0 = 1, imp = 0;
     char z;
 
     for(int i = 0; i < argc; i++){
         if(strcmp(argv[i], "-h") == 0){
-            printf("-o <arquivo> : redireciona a saida para o arquivo\n-f <arquivo> : indica o arquivo que contém o grafo de entrada\n-s : mostra a solução em ordem crescente\n);
+            printf("-o <arquivo> : redireciona a saida para o arquivo\n-f <arquivo> : indica o arquivo que contém o grafo de entrada\n-s : mostra a solução em ordem crescente\n-i : vértice inicial dependendo do algoritmo\n");
             return 0;
         }
         else if(strcmp(argv[i], "-f") == 0){
             strcpy(string, argv[i + 1]);
         } 
+        else if(strcmp(argv[i], "-i") == 0){
+           v0 = atoi(argv[i+1]);
+        }
         else if(strcmp(argv[i], "-s") == 0){
             imp = 1;
         }
@@ -31,9 +33,14 @@ int main(int argc, char *argv[ ]){
 
     fscanf(pont_arq, "%d %d", &n_ver, &n_ares);
 
-    aresta arestas[n_ares];
+    int matriz[n_ver+1][n_ver+1];
 
-    for(int i = 1; i <= n_ares; i++ ){
+    for(int i = 0; i <= n_ver; i++) {
+        for(int j = 0; j <= n_ver; j++ ){
+            matriz[i][j] = INT_MAX;
+        }
+    }
+    for(int i = 0; i < n_ares; i++ ){
         fscanf(pont_arq, "%d %d%c", &x, &y, &z);
         if (z == ' '){
             fscanf(pont_arq, "%d", &a);
@@ -41,14 +48,17 @@ int main(int argc, char *argv[ ]){
         else {
             a = 1;
         }
-        arestas[i].vert_u = x;
-        arestas[i].vert_v = y;
-        arestas[i].peso = a;
+        matriz[x][y] = a;
+        matriz[y][x] = a;
     }
+    
     fclose(pont_arq);
 
-    quicksort(arestas, 1, n_ares+1);
-    kruskal(arestas, n_ver, n_ares, imp, nome_saida);
+    FILE *pont_saida;
 
+    int total = prim(n_ver, matriz, v0, imp, nome_saida, pont_saida);
+    
+    printf("\nCusto total= %d\n", total);
+    
     return 0;
 }
